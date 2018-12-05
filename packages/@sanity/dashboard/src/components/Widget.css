@@ -1,0 +1,49 @@
+@import "part:@sanity/base/theme/variables-style";
+
+.root {
+  /* composes: shadow-1dp from 'part:@sanity/base/theme/shadows-style'; */
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: box-shadow 200ms;
+
+  @nest &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.125);
+  }
+}
+
+.header {
+  padding: 1em;
+  border-bottom: 1px solid #eee;
+
+  @media (--screen-medium) {
+    padding: 1.5em 1.5em 1em;
+  }
+}
+
+.title {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.content {
+  padding: 0.5em 1em 1em;
+  flex: 1;
+
+  @media (--screen-medium) {
+    padding: 1em 1.5em 1em;
+  }
+}
+
+.footer {
+  border-top: 1px solid #eee;
+  padding: 1em;
+
+  @media (--screen-medium) {
+    padding: 1em 1.5em;
+  }
+}

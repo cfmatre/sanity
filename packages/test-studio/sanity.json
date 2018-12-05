@@ -32,6 +32,7 @@
     "@sanity/rich-date-input",
     "@sanity/code-input",
     "@sanity/color-input",
+    "@sanity/dashboard",
     "@sanity/desk-tool",
     "@sanity/storybook",
     "@sanity/google-maps-input",
@@ -62,6 +63,14 @@
     {
       "name": "part:@sanity/desk-tool/structure",
       "path": "src/deskStructure.js"
+    },
+    {
+      "name": "part:@sanity/dashboard/config",
+      "path": "src/dashboardConfig.js"
+    },
+    {
+      "implements": "part:@sanity/dashboard/widget",
+      "path": "src/widgets/custom"
     }
   ],
   "env": {

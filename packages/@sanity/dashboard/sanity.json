@@ -1,0 +1,37 @@
+{
+  "paths": {
+    "source": "./src",
+    "compiled": "./lib"
+  },
+  "plugins": [],
+  "parts": [
+    {
+      "implements": "part:@sanity/base/tool",
+      "path": "./"
+    },
+    {
+      "name": "part:@sanity/dashboard/widget",
+      "description": "A dashboard widget"
+    },
+    {
+      "implements": "part:@sanity/dashboard/widget",
+      "path": "widgets/devFirstSteps"
+    },
+    {
+      "implements": "part:@sanity/dashboard/widget",
+      "path": "widgets/devInfo"
+    },
+    {
+      "implements": "part:@sanity/dashboard/widget",
+      "path": "widgets/devWelcome"
+    },
+    {
+      "implements": "part:@sanity/dashboard/widget",
+      "path": "widgets/invite"
+    },
+    {
+      "implements": "part:@sanity/dashboard/widget",
+      "path": "widgets/recentDocs"
+    }
+  ]
+}

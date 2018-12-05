@@ -1,0 +1,76 @@
+@import "part:@sanity/base/theme/variables-style";
+
+.root {
+  composes: shadow-1dp from 'part:@sanity/base/theme/shadows-style';
+  background: rgb(31, 41, 46);
+  color: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+
+  & h2 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 1rem 0;
+    padding: 0 1rem;
+  }
+
+  & p {
+    margin: 1rem 0;
+    padding: 0 1rem;
+  }
+
+  @media (--screen-large) {
+    display: flex;
+
+    & h2 {
+      font-size: 36px;
+      line-height: 1.1;
+    }
+
+    & p {
+      font-size: 20px;
+      line-height: 26px;
+      padding: 0 4rem;
+    }
+  }
+}
+
+.textContainer {
+  text-align: center;
+  padding: 1rem 0;
+
+  & > * {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  @media (--screen-large) {
+    flex: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.mediaContainer {
+  @media (--screen-large) {
+    flex: 2;
+  }
+}
+
+.youtubeVideo {
+  position: relative;
+  padding-bottom: calc(9 / 16 * 100%);
+
+  & iframe {
+    background: none;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 100%;
+  }
+}

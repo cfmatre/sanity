@@ -1,0 +1,36 @@
+@import "part:@sanity/base/theme/variables-style";
+
+.root {
+  height: 100%;
+}
+
+.headline {
+  display: none;
+}
+
+.sections {
+  padding: 0.5em;
+  max-width: 84em;
+  margin: 0 auto;
+
+  @media (--screen-large) {
+    padding: 2.5em;
+  }
+}
+
+.row {
+  @media (--screen-large) {
+    display: flex;
+  }
+}
+
+.widgetWrapper {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5em;
+
+  @nest & > * {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

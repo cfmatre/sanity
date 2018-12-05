@@ -1,0 +1,97 @@
+@import "part:@sanity/base/theme/variables-style";
+
+.tutorialEntry {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  @media (--screen-medium) {
+    display: flex;
+  }
+}
+
+.tutorialEntry + .tutorialEntry {
+  margin-top: 2em;
+
+  @media (--screen-medium) {
+    margin-top: 1em;
+  }
+}
+
+.preview {
+  position: relative;
+  background: #666;
+  transition: opacity 150ms;
+
+  @media (--screen-medium) {
+    width: 200px;
+    min-width: 200px;
+  }
+
+  @media (hover: hover) {
+    opacity: 0.7;
+
+    @nest .tutorialEntry:hover & {
+      opacity: 1;
+    }
+  }
+}
+
+.mediaContainer {
+  padding-bottom: calc(9 / 16 * 100%);
+}
+
+.playIcon {
+  position: absolute;
+  top: calc(50% - 22px);
+  left: calc(50% - 22px);
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  border-radius: 50%;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 17px;
+    border-top: 10px solid transparent;
+    border-left: 15px solid #222;
+    border-bottom: 10px solid transparent;
+  }
+}
+
+.textContainer {
+  flex: 1;
+  padding: 0.5em 0 0 0;
+
+  & h3 {
+    font-size: 18px;
+    margin: 0.25rem 0;
+  }
+
+  & p {
+    margin: 0.25rem 0;
+    opacity: 0.7;
+  }
+
+  @media (--screen-medium) {
+    padding: 0 0 0 1em;
+  }
+}
+
+.loadMoreLink {
+  margin: -1em;
+
+  & a {
+    text-decoration: none;
+    font-weight: 600;
+    display: block;
+    text-align: center;
+    padding: 1em;
+
+    &:hover {
+      color: inherit;
+    }
+  }
+}

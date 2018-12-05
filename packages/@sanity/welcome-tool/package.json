@@ -1,0 +1,8 @@
+{
+  "name": "@sanity/welcome-tool",
+  "version": "0.0.0",
+  "main": "src/index.js",
+  "devDependencies": {
+    "react": "^16.2.0"
+  }
+}
