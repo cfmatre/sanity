@@ -25,7 +25,7 @@ export default class PopOver extends React.PureComponent {
     hasAnimation: PropTypes.bool,
     color: PropTypes.oneOf(['default', 'danger']),
     padding: PropTypes.oneOf(['none', 'small', 'medium', 'large']),
-    referenceElement: PropTypes.element,
+    referenceElement: PropTypes.instanceOf(Element),
     actions: PropTypes.arrayOf(
       PropTypes.shape({
         kind: PropTypes.string,
