@@ -28,6 +28,7 @@
 .editor > * {
   position: relative;
   box-sizing: content-box;
+  word-break: break-word;
   padding-left: var(--small-padding);
   padding-right: var(--small-padding);
 

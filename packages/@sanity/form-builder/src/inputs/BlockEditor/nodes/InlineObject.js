@@ -246,26 +246,26 @@ export default class InlineObject extends React.Component<Props, State> {
 
   handleEditStart = (event: SyntheticMouseEvent<>) => {
     event.stopPropagation()
-    const {editor, readOnly} = this.props
-    if (readOnly) {
-      this.handleView(event)
-      return
-    }
-    editor.focus().blur()
-    setTimeout(() => {
-      this.setFocus()
-    }, 200)
-  }
-
-  setFocus = () => {
     const {editor, node, onFocus} = this.props
-    const block = editor.value.document.getClosestBlock(node.key)
-    onFocus([{_key: block.key}, 'children', {_key: node.key}, FOCUS_TERMINATOR])
+    editor.blur()
+    editor
+      .moveToEndOfNode(node)
+      .focus()
+      .blur()
+    const block = editor.value.focusBlock
+    setTimeout(() => {
+      onFocus([{_key: block.key}, 'children', {_key: node.key}, FOCUS_TERMINATOR])
+    }, 100)
   }
 
-  handleView = (event: SyntheticMouseEvent<>) => {
-    event.stopPropagation()
-    this.setFocus()
+  handleView = () => {
+    const {editor, node, onFocus} = this.props
+    onFocus([
+      {_key: editor.value.document.getParent(node.key).key},
+      'children',
+      {_key: node.key},
+      FOCUS_TERMINATOR
+    ])
   }
 
   refPreviewContainer = (elm: ?HTMLSpanElement) => {
@@ -330,9 +330,10 @@ export default class InlineObject extends React.Component<Props, State> {
         contentEditable={false}
       >
         <span
-          onClick={this.handleEditStart}
+          onClick={readOnly ? this.handleView : this.handleEditStart}
           ref={this.refPreviewContainer}
           className={styles.previewContainer}
+          style={readOnly ? {cursor: 'default'} : {}}
         >
           {!isEmpty && <Preview type={type} value={value} layout="inline" />}
           {isEmpty && !readOnly && <span>Click to edit</span>}

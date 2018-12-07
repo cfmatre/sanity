@@ -59,10 +59,15 @@ export default class Span extends React.Component<Props, State> {
   // Open dialog when user clicks the node,
   // but don't act on double clicks (mark text as normal)
   handleMouseDown = () => {
+    const {readOnly} = this.props
     this._isMarkingText = true
     setTimeout(() => {
       if (this._clickCounter === 1 && !this._isMarkingText) {
-        this.startEditing()
+        if (readOnly) {
+          this.handleView()
+        } else {
+          this.startEditing()
+        }
       }
       this._clickCounter = 0
     }, 200)
@@ -81,7 +86,17 @@ export default class Span extends React.Component<Props, State> {
     editor.blur()
     setTimeout(() => {
       onFocus(focusPath)
-    }, 200)
+    }, 100)
+  }
+
+  handleView = () => {
+    const {editor, node, onFocus} = this.props
+    onFocus([
+      {_key: editor.value.document.getParent(node.key).key},
+      'markDefs',
+      {_key: node.data.get('annotations')[this.state.focusedAnnotationName]._key},
+      FOCUS_TERMINATOR
+    ])
   }
 
   handleMouseUp = () => {

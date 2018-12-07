@@ -64,7 +64,8 @@ export default class BlockEditorInput extends React.Component<Props, State> {
     renderCustomMarkers: null,
     readOnly: false
   }
-  _inputId = uniqueId('BlockEditor')
+  inputId = uniqueId('BlockEditor')
+  blockEditor = React.createRef()
 
   state = {
     fullscreen: false
@@ -76,13 +77,14 @@ export default class BlockEditorInput extends React.Component<Props, State> {
   }
 
   focus = () => {
-    const {controller, onFocus, value} = this.props
-    controller.focus()
-    const {focusBlock} = controller.value
-    if (focusBlock) {
-      onFocus([{_key: focusBlock.key}])
-    } else if (Array.isArray(value) && value.length) {
-      onFocus([{_key: value[0]._key}])
+    const {focusPath, onFocus, readOnly} = this.props
+    const blockEditor = this.blockEditor && this.blockEditor.current
+    const editor = blockEditor && blockEditor.getEditor()
+    if (editor && !readOnly) {
+      editor.focus()
+      if (!focusPath || focusPath.length === 0) {
+        onFocus([{_key: editor.value.focusBlock.key}])
+      }
     }
   }
 
@@ -109,32 +111,34 @@ export default class BlockEditorInput extends React.Component<Props, State> {
       renderBlockActions,
       renderCustomMarkers,
       type,
-      value,
       undoRedoStack,
-      userIsWritingText
+      userIsWritingText,
+      value
     } = this.props
 
     const {fullscreen} = this.state
 
-    const isActive = readOnly || (Array.isArray(focusPath) && focusPath.length >= 1)
+    const isActive = Array.isArray(focusPath) && focusPath.length >= 1
 
     return (
       <div>
         <FormField
           label={type.title}
-          labelFor={this._inputId}
+          labelFor={this.inputId}
           markers={markers}
           description={type.description}
           level={level}
         >
-          <button
-            type="button"
-            tabIndex={0}
-            className={styles.focusSkipper}
-            onClick={this.handleFocusSkipper}
-          >
-            Jump to editor
-          </button>
+          {!readOnly && (
+            <button
+              type="button"
+              tabIndex={0}
+              className={styles.focusSkipper}
+              onClick={this.handleFocusSkipper}
+            >
+              Jump to editor
+            </button>
+          )}
         </FormField>
         <BlockEditor
           blockContentFeatures={blockContentFeatures}
@@ -152,6 +156,7 @@ export default class BlockEditorInput extends React.Component<Props, State> {
           onPatch={onPatch}
           onPaste={onPaste}
           onToggleFullScreen={this.handleToggleFullScreen}
+          ref={this.blockEditor}
           readOnly={readOnly}
           renderCustomMarkers={renderCustomMarkers}
           renderBlockActions={renderBlockActions}

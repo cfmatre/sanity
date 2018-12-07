@@ -9,6 +9,8 @@ import {Portal} from 'part:@sanity/components/utilities/portal'
 import StackedEscapeable from 'part:@sanity/components/utilities/stacked-escapable'
 
 import Button from 'part:@sanity/components/buttons/default'
+import CloseIcon from 'part:@sanity/base/close-icon'
+import FullscreenIcon from 'part:@sanity/base/fullscreen-icon'
 import Spinner from 'part:@sanity/components/loading/spinner'
 
 import EditNode from './EditNode'
@@ -64,8 +66,7 @@ type Props = {
 }
 
 type State = {
-  preventScroll: boolean,
-  toolbarStyle: any
+  preventScroll: boolean
 }
 
 function findEditNode(focusPath: Path, editorValue) {
@@ -96,17 +97,16 @@ function findEditNode(focusPath: Path, editorValue) {
 
 export default class BlockEditor extends React.PureComponent<Props, State> {
   state = {
-    preventScroll: false,
-    toolbarStyle: {}
+    preventScroll: false
   }
 
   static defaultProps = {
     readOnly: false
   }
-  _scrollContainer: ?HTMLElement = null
-  _rootElement: ?HTMLElement = null
-  _editorWrapper: ?HTMLElement = null
-  _editor: ElementRef<any> = React.createRef()
+  scrollContainer: ?HTMLElement = null
+  rootElement: ?HTMLElement = null
+  editorWrapper: ?HTMLElement = null
+  editor: ElementRef<any> = React.createRef()
 
   componentDidUpdate() {
     this.checkScrollHeight()
@@ -160,7 +160,17 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
   }
 
   renderEditNode(nodeValue: any, type: Type, path: Path, slateNode: SlateNode) {
-    const {focusPath, readOnly, onBlur, onFocus, onPatch, markers, value, fullscreen} = this.props
+    const {
+      focusPath,
+      fullscreen,
+      markers,
+      onBlur,
+      onFocus,
+      onPatch,
+      readOnly,
+      setFocus,
+      value
+    } = this.props
     return (
       <EditNode
         editor={this.getEditor()}
@@ -173,6 +183,7 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
         onFocus={onFocus}
         onPatch={onPatch}
         path={path}
+        setFocus={setFocus}
         readOnly={readOnly}
         type={type}
         value={value}
@@ -181,20 +192,20 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
   }
 
   setScrollContainer = (element: ?HTMLDivElement) => {
-    this._scrollContainer = element
+    this.scrollContainer = element
   }
 
   setEditorWrapper = (element: ?HTMLDivElement) => {
-    this._editorWrapper = element
+    this.editorWrapper = element
   }
 
   setRootElement = (element: ?HTMLDivElement) => {
-    this._rootElement = element
+    this.rootElement = element
   }
 
   checkScrollHeight = () => {
-    if (this._scrollContainer && this._editorWrapper) {
-      const preventScroll = this._scrollContainer.offsetHeight < this._editorWrapper.offsetHeight
+    if (this.scrollContainer && this.editorWrapper) {
+      const preventScroll = this.scrollContainer.offsetHeight < this.editorWrapper.offsetHeight
       if (this.state.preventScroll !== preventScroll) {
         this.setState({
           preventScroll
@@ -204,8 +215,8 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
   }
 
   getEditor() {
-    if (this._editor && this._editor.current) {
-      return this._editor.current.getEditor()
+    if (this.editor && this.editor.current) {
+      return this.editor.current.getEditor()
     }
     return null
   }
@@ -249,7 +260,7 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
         onPatch={onPatch}
         onToggleFullScreen={this.handleToggleFullscreen}
         readOnly={readOnly}
-        ref={this._editor}
+        ref={this.editor}
         renderBlockActions={renderBlockActions}
         renderCustomMarkers={renderCustomMarkers}
         setFocus={setFocus}
@@ -258,6 +269,23 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
         userIsWritingText={userIsWritingText}
         value={value}
       />
+    )
+  }
+
+  renderReadOnlyFullscreenButton() {
+    const {readOnly, fullscreen} = this.props
+    if (!readOnly) {
+      return null
+    }
+    return (
+      <div className={styles.readOnlyFullscreenButtonContainer}>
+        <Button
+          kind="simple"
+          onClick={this.handleToggleFullscreen}
+          title={`Open in fullscreen`}
+          icon={fullscreen ? CloseIcon : FullscreenIcon}
+        />
+      </div>
     )
   }
 
@@ -272,28 +300,28 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
       isLoading,
       markers,
       onFocus,
-      readOnly,
       setFocus,
+      readOnly,
       type,
       userIsWritingText
     } = this.props
     const isEditingNode = (focusPath || []).length > 1
-    if (readOnly) {
-      return this.renderEditor()
-    }
     return (
       <div>
-        <Toolbar
-          blockContentFeatures={blockContentFeatures}
-          editor={this.getEditor()}
-          editorValue={editorValue}
-          fullscreen={fullscreen}
-          markers={markers}
-          onFocus={onFocus}
-          onToggleFullScreen={this.handleToggleFullscreen}
-          type={type}
-          userIsWritingText={userIsWritingText}
-        />
+        {!readOnly && (
+          <Toolbar
+            blockContentFeatures={blockContentFeatures}
+            editor={this.getEditor()}
+            editorValue={editorValue}
+            fullscreen={fullscreen}
+            markers={markers}
+            onFocus={onFocus}
+            onToggleFullScreen={this.handleToggleFullscreen}
+            type={type}
+            userIsWritingText={userIsWritingText}
+          />
+        )}
+
         {isLoading && (
           <div className={styles.loading}>
             <Spinner center />
@@ -341,19 +369,25 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const {focusPath, fullscreen} = this.props
+    const {focusPath, fullscreen, readOnly} = this.props
     const isFocused = (focusPath || []).length
     return (
       <div className={styles.root} ref={this.setRootElement}>
         {fullscreen && (
           <Portal>
             <StackedEscapeable onEscape={this.handleToggleFullscreen}>
-              <div className={styles.fullscreen}>{this.renderBlockEditor()}</div>
+              <div className={styles.fullscreen}>
+                {this.renderReadOnlyFullscreenButton()}
+                {this.renderBlockEditor()}
+              </div>
             </StackedEscapeable>
           </Portal>
         )}
         {!fullscreen && (
-          <div className={isFocused ? styles.focus : ''}>{this.renderBlockEditor()}</div>
+          <div className={isFocused && !readOnly ? styles.focus : ''}>
+            {this.renderReadOnlyFullscreenButton()}
+            {this.renderBlockEditor()}
+          </div>
         )}
       </div>
     )

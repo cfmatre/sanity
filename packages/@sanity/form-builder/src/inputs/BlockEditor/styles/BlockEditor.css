@@ -44,6 +44,7 @@
     width: 100vw;
     background-color: color(var(--body-bg) lightness(- 2%));
     background-image: unset;
+    border: none;
 
     @nest &::before {
       display: none;
@@ -121,4 +122,22 @@
   background-color: #fff;
   z-index: 99999;
   opacity: 0.5;
+}
+
+.readOnlyFullscreenButtonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+  font-size: 0.8rem;
+  border: none;
+
+  @nest & svg {
+    transform: scale(1.5);
+  }
+
+  @nest .fullscreen & {
+    height: auto;
+    background-color: color(var(--body-bg) lightness(- 2%));
+  }
 }

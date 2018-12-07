@@ -14,7 +14,6 @@ import LinkIcon from 'part:@sanity/base/link-icon'
 import EditIcon from 'part:@sanity/base/edit-icon'
 import VisibilityIcon from 'part:@sanity/base/visibility-icon'
 import TrashIcon from 'part:@sanity/base/trash-icon'
-import IconMoreVert from 'part:@sanity/base/more-vert-icon'
 import DropDownButton from 'part:@sanity/components/buttons/dropdown'
 
 import type {
@@ -118,7 +117,11 @@ export default class BlockObject extends React.Component<Props, State> {
   }
 
   handleDragStart = (event: SyntheticDragEvent<HTMLElement>) => {
-    const {node} = this.props
+    const {node, readOnly} = this.props
+    if (readOnly) {
+      event.preventDefault()
+      return
+    }
     this.setState({isDragging: true})
     this.addDragHandlers()
     const encoded = Base64.serializeNode(node, {preserveKeys: true, preserveData: true})
@@ -266,7 +269,11 @@ export default class BlockObject extends React.Component<Props, State> {
   }
 
   handleDoubleClick = (event: SyntheticMouseEvent<>) => {
-    event.stopPropagation()
+    const {readOnly} = this.props
+    if (readOnly) {
+      this.handleView()
+      return
+    }
     this.handleEditStart()
   }
 
@@ -278,7 +285,7 @@ export default class BlockObject extends React.Component<Props, State> {
       .blur()
     setTimeout(() => {
       onFocus([{_key: node.key}, FOCUS_TERMINATOR])
-    }, 200)
+    }, 100)
   }
 
   handleClose = () => {
@@ -314,6 +321,15 @@ export default class BlockObject extends React.Component<Props, State> {
     if (item.name === 'edit') {
       this.handleEditStart()
     }
+
+    if (item.name === 'view') {
+      this.handleView()
+    }
+  }
+
+  handleView = () => {
+    const {node, onFocus} = this.props
+    onFocus([{_key: node.key}, FOCUS_TERMINATOR])
   }
 
   renderMenuItem = (item: DropDownButtonItem) => {
@@ -435,7 +451,11 @@ export default class BlockObject extends React.Component<Props, State> {
           draggable={!readOnly}
           className={classname}
         >
-          <div ref={this.refPreview} className={styles.previewContainer}>
+          <div
+            ref={this.refPreview}
+            className={styles.previewContainer}
+            style={readOnly ? {cursor: 'default'} : {}}
+          >
             {this.renderPreview(value)}
           </div>
         </div>

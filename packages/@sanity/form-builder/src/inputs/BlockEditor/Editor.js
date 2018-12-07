@@ -104,17 +104,17 @@ export default class Editor extends React.Component<Props> {
     renderCustomMarkers: null,
     renderBlockActions: null
   }
-  _blockDragMarker: ?HTMLDivElement
-  _editorSchema: SlateSchema
+  blockDragMarker: ?HTMLDivElement
+  editorSchema: SlateSchema
 
-  _editor: ElementRef<any> = React.createRef()
+  editor: ElementRef<any> = React.createRef()
 
-  _plugins = []
+  plugins = []
 
   constructor(props: Props) {
     super(props)
-    this._editorSchema = buildEditorSchema(props.blockContentFeatures)
-    this._plugins = [
+    this.editorSchema = buildEditorSchema(props.blockContentFeatures)
+    this.plugins = [
       QueryPlugin(),
       ListItemOnEnterKeyPlugin({defaultBlock: EDITOR_DEFAULT_BLOCK_TYPE}),
       ListItemOnTabKeyPlugin(),
@@ -128,7 +128,7 @@ export default class Editor extends React.Component<Props> {
         shift: true
       }),
       PastePlugin({
-        controller: this._editor,
+        controller: this.editor,
         blockContentType: props.type,
         blockContentFeatures: props.blockContentFeatures,
         onChange: props.onChange,
@@ -156,9 +156,9 @@ export default class Editor extends React.Component<Props> {
     if (!editor) {
       return
     }
-
     // Check if focusPAth has changed from what is currently the focus in the editor
     const {focusPath} = this.props
+
     if (!focusPath || focusPath.length === 0) {
       return
     }
@@ -231,8 +231,8 @@ export default class Editor extends React.Component<Props> {
   }
 
   getEditor = () => {
-    if (this._editor && this._editor.current) {
-      return this._editor.current
+    if (this.editor && this.editor.current) {
+      return this.editor.current
     }
     return null
   }
@@ -246,23 +246,20 @@ export default class Editor extends React.Component<Props> {
     // eslint-disable-next-line react/no-find-dom-node
     const editorDOMNode = ReactDOM.findDOMNode(this.getEditor())
     if (editorDOMNode instanceof HTMLElement) {
-      const controllerRect = editorDOMNode.getBoundingClientRect()
       const elemRect = node.getBoundingClientRect()
-      const topPos = Number((elemRect.top - controllerRect.top).toFixed(1)).toFixed(2)
-      const bottomPos = Number(
-        parseInt(topPos + (elemRect.bottom - elemRect.top), 10).toFixed(1)
-      ).toFixed(2)
+      const topPos = node.scrollTop + node.offsetTop
+      const bottomPos = node.scrollTop + node.offsetTop + elemRect.height
       const top = pos === 'after' ? `${bottomPos}px` : `${topPos}px`
-      if (this._blockDragMarker) {
-        this._blockDragMarker.style.display = 'block'
-        this._blockDragMarker.style.top = top
+      if (this.blockDragMarker) {
+        this.blockDragMarker.style.display = 'block'
+        this.blockDragMarker.style.top = top
       }
     }
   }
 
   handleHideBlockDragMarker = () => {
-    if (this._blockDragMarker) {
-      this._blockDragMarker.style.display = 'none'
+    if (this.blockDragMarker) {
+      this.blockDragMarker.style.display = 'none'
     }
   }
 
@@ -331,7 +328,7 @@ export default class Editor extends React.Component<Props> {
   }
 
   refBlockDragMarker = (blockDragMarker: ?HTMLDivElement) => {
-    this._blockDragMarker = blockDragMarker
+    this.blockDragMarker = blockDragMarker
   }
 
   // eslint-disable-next-line complexity
@@ -487,15 +484,16 @@ export default class Editor extends React.Component<Props> {
       (renderBlockActions || hasMarkers) && styles.hasBlockExtras,
       fullscreen ? styles.fullscreen : null
     ].filter(Boolean)
+
     return (
       <div className={classNames.join(' ')}>
         <BlockExtrasOverlay
-          editor={this._editor}
+          editor={this.editor}
           editorValue={editorValue}
           markers={markers}
           onFocus={onFocus}
           onPatch={onPatch}
-          renderBlockActions={renderBlockActions}
+          renderBlockActions={readOnly ? undefined : renderBlockActions}
           renderCustomMarkers={renderCustomMarkers}
           userIsWritingText={userIsWritingText}
           value={value}
@@ -503,7 +501,7 @@ export default class Editor extends React.Component<Props> {
         <SlateReactEditor
           spellCheck={false}
           className={styles.editor}
-          ref={this._editor}
+          ref={this.editor}
           value={editorValue}
           onChange={this.handleChange}
           onFocus={this.handleEditorFocus}
@@ -512,11 +510,11 @@ export default class Editor extends React.Component<Props> {
           onKeyDown={this.handleToggleFullscreen}
           onDragOver={this.handleDrag}
           onDrop={this.handleDrag}
-          plugins={this._plugins}
+          plugins={this.plugins}
           readOnly={readOnly}
           renderNode={this.renderNode}
           renderMark={this.renderMark}
-          schema={this._editorSchema}
+          schema={this.editorSchema}
         />
         <div
           className={styles.blockDragMarker}

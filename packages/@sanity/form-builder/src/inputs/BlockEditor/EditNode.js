@@ -28,6 +28,7 @@ type Props = {
   onPatch: (event: PatchEvent) => void,
   path: Path,
   readOnly?: boolean,
+  setFocus: void => void,
   type: Type,
   value: ?(FormBuilderValue[])
 }
@@ -71,8 +72,9 @@ export default class EditNode extends React.Component<Props> {
   }
 
   handleClose = () => {
-    const {focusPath, onFocus} = this.props
+    const {focusPath, onFocus, setFocus} = this.props
     onFocus(focusPath.slice(0, 1))
+    setFocus()
   }
 
   handleDialogAction = () => {
@@ -120,7 +122,13 @@ export default class EditNode extends React.Component<Props> {
     }
     if (editModalLayout === 'popover') {
       return (
-        <Popover placement="bottom" referenceElement={nodeRef}>
+        <Popover
+          placement="bottom"
+          referenceElement={nodeRef}
+          onClickOutside={this.handleClose}
+          onEscape={this.handleClose}
+          onClose={this.handleClose}
+        >
           {this.renderInput()}
         </Popover>
       )

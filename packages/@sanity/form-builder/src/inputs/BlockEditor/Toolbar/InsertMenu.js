@@ -20,6 +20,7 @@ type Props = {
 type BlockItem = {
   title: string,
   value: Type,
+  icon: any,
   isInline: boolean,
   isDisabled: boolean
 }
@@ -33,7 +34,7 @@ export default class InsertMenu extends React.Component<Props> {
     )
   }
 
-  renderItem = item => {
+  renderItem = (item: BlockItem) => {
     const Icon = item.icon
     return (
       <div className={styles.item}>
@@ -70,7 +71,6 @@ export default class InsertMenu extends React.Component<Props> {
   handleOnAction = (item: BlockItem) => {
     const {onFocus, editor} = this.props
     let focusPath
-    editor.controller.flush()
     if (item.isInline) {
       editor.command('insertInlineObject', {objectType: item.value})
       focusPath = [
