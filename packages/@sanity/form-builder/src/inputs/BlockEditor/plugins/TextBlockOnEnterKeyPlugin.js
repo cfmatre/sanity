@@ -19,7 +19,8 @@ export default function TextBlockOnEnterKeyPlugin(options: Options = {}) {
   }
   return {
     onKeyDown(event: SyntheticKeyboardEvent<*>, editor: SlateEditor, next: void => void) {
-      if (event.key !== 'Enter') {
+      const {key, shiftKey} = event
+      if (key !== 'Enter' || shiftKey) {
         return next()
       }
       const {value} = editor
@@ -34,9 +35,13 @@ export default function TextBlockOnEnterKeyPlugin(options: Options = {}) {
       ) {
         return next()
       }
-      const key = randomKey(12)
+      const blocKey = randomKey(12)
       event.preventDefault()
-      editor.insertBlock({...defaultBlock, key: key, data: {...defaultBlock.data, _key: key}})
+      editor.insertBlock({
+        ...defaultBlock,
+        key: blocKey,
+        data: {...defaultBlock.data, _key: blocKey}
+      })
       return editor
     }
   }
