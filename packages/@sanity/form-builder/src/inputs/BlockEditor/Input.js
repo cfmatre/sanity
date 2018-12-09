@@ -78,14 +78,16 @@ export default class BlockEditorInput extends React.Component<Props, State> {
 
   focus = () => {
     const {focusPath, onFocus, readOnly} = this.props
-    const blockEditor = this.blockEditor && this.blockEditor.current
-    const editor = blockEditor && blockEditor.getEditor()
-    if (editor && !readOnly) {
-      editor.focus()
-      if (!focusPath || focusPath.length === 0) {
-        onFocus([{_key: editor.value.focusBlock.key}])
+    window.requestAnimationFrame(() => {
+      const blockEditor = this.blockEditor && this.blockEditor.current
+      const editor = blockEditor && blockEditor.getEditor()
+      if (editor && !readOnly) {
+        editor.focus()
+        if (!focusPath || focusPath.length === 0) {
+          onFocus([{_key: editor.value.focusBlock.key}])
+        }
       }
-    }
+    })
   }
 
   handleFocusSkipper = () => {
