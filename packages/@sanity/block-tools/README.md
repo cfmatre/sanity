@@ -106,9 +106,9 @@ blockTools.htmlToBlocks(
     parseHtml: html => new JSDOM(html),
     rules: [
 
-      // Special rule for code blocks (wrapped in pre and code tag)
+      // Special rule for code blocks
       {
-        deserialize(el, next) {
+        deserialize(el, next, block) {
           if (el.tagName.toLowerCase() != 'pre') {
             return undefined
           }
@@ -120,14 +120,14 @@ blockTools.htmlToBlocks(
           childNodes.forEach(node => {
             text += node.textContent
           })
-          return {
-            _type: 'span',
-            marks: ['code'],
+          // Return this as an own block (via block helper function), instead of appending it to a default block's children
+          return block({
+            _type: 'code',
+            langauge: 'javascript',
             text: text
-          }
+          })
         }
       }
-
     ]
   }
 )

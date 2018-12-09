@@ -114,6 +114,10 @@ function isWhiteSpaceChar(text) {
 
 export function trimWhitespace(blocks) {
   blocks.forEach(block => {
+    if (!block.children) {
+      return
+    }
+    // eslint-disable-next-line complexity
     block.children.forEach((child, index) => {
       if (child._type !== 'span') {
         return
@@ -163,6 +167,11 @@ export function ensureRootIsBlocks(blocks) {
   return blocks.reduce((memo, node, i, original) => {
     if (node._type === 'block') {
       memo.push(node)
+      return memo
+    }
+
+    if (node._type === '__block') {
+      memo.push(node.block)
       return memo
     }
 

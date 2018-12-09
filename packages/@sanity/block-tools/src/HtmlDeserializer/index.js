@@ -65,7 +65,7 @@ export default class HtmlDeserializer {
       flattenNestedBlocks(ensureRootIsBlocks(this.deserializeElements(children)))
     )
     if (_markDefs.length > 0) {
-      blocks.forEach(block => {
+      blocks.filter(block => block._type === 'block').forEach(block => {
         block.markDefs = block.markDefs || []
         block.markDefs = block.markDefs.concat(
           _markDefs.filter(def => {
@@ -135,12 +135,20 @@ export default class HtmlDeserializer {
           throw new Error(`The \`next\` argument was called with invalid children: "${_elements}".`)
       }
     }
+
+    const block = props => {
+      return {
+        _type: '__block',
+        block: props
+      }
+    }
+
     for (let i = 0; i < this.rules.length; i++) {
       const rule = this.rules[i]
       if (!rule.deserialize) {
         continue
       }
-      const ret = rule.deserialize(element, next)
+      const ret = rule.deserialize(element, next, block)
       const type = resolveJsType(ret)
 
       if (type != 'array' && type != 'object' && type != 'null' && type != 'undefined') {
