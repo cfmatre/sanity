@@ -73,6 +73,7 @@
   background-color: var(--input-bg);
   width: 95vw;
   box-sizing: border-box;
+  padding-bottom: 4rem;
 
   @media (--screen-medium) {
     width: 90vw;
