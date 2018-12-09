@@ -214,6 +214,10 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
     }
   }
 
+  handleScroll = (event: SyntheticEvent<HTMLDivElement>) => {
+    event.currentTarget.scrollLeft = 0
+  }
+
   getEditor() {
     if (this.editor && this.editor.current) {
       return this.editor.current.getEditor()
@@ -351,7 +355,7 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
           }
           onActivate={setFocus}
         >
-          <div className={styles.scrollContainer} ref={this.setScrollContainer}>
+          <div className={styles.scrollContainer} ref={this.setScrollContainer} onScroll={this.handleScroll}>
             <div className={styles.editorWrapper} ref={this.setEditorWrapper}>
               {this.renderEditor()}
               {isEditingNode && fullscreen && this.renderNodeEditor()}
