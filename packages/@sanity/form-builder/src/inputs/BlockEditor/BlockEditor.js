@@ -302,10 +302,22 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
       onFocus,
       setFocus,
       readOnly,
+      renderBlockActions,
       type,
       userIsWritingText
     } = this.props
+
     const isEditingNode = (focusPath || []).length > 1
+
+    const hasMarkers = markers.filter(marker => marker.path.length > 0).length > 0
+
+    const scrollContainerClassNames = [
+      styles.scrollContainer,
+      renderBlockActions || hasMarkers ? styles.hasBlockExtras : null
+    ]
+      .filter(Boolean)
+      .join(' ')
+
     return (
       <div>
         {!readOnly && (
@@ -351,7 +363,7 @@ export default class BlockEditor extends React.PureComponent<Props, State> {
           }
           onActivate={setFocus}
         >
-          <div className={styles.scrollContainer} ref={this.setScrollContainer}>
+          <div className={scrollContainerClassNames} ref={this.setScrollContainer}>
             <div className={styles.editorWrapper} ref={this.setEditorWrapper}>
               {this.renderEditor()}
               {isEditingNode && fullscreen && this.renderNodeEditor()}
