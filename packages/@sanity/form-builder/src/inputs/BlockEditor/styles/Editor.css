@@ -17,7 +17,7 @@
 }
 
 .root.hasBlockExtras:not(.fullscreen) {
-  margin-right: calc(var(--block-extras-width) - var(--medium-padding) + 1px);
+  margin-right: var(--block-extras-width);
 }
 
 /* less spacing on block objects / non-text objects */
